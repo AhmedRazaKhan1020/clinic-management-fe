@@ -1,12 +1,12 @@
 "use client"
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import axios from "axios";
 // import Header from '../Header'
 // import PHeader from '../PHeader'
 // import AHeader from '../AHeader'
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function CasePage() {
   const router = useRouter();

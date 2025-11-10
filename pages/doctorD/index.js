@@ -4,7 +4,7 @@ import axios from "axios";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import Header from '../Header'
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function DoctorDashboard() {

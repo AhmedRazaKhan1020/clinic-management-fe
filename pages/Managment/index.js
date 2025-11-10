@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import AHeader from '../AHeader'
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/router"
 import { FolderPlus, SquarePen, Trash } from "lucide-react";
 
 const index = () => {

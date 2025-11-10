@@ -1,11 +1,12 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import {useSearchParams } from "next/navigation"
 import axios from "axios"
 import Header from '../Header'
 import PHeader from '../PHeader'
 import AHeader from '../AHeader'
 import toast from "react-hot-toast"
+import { useRouter } from "next/router"
 
 export default function CasePage() {
   const params = useSearchParams()

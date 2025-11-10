@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ClipboardClock, Hospital, LayoutDashboard, UsersRound, Menu, X, User } from "lucide-react";
 import axios from "axios";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 
 export default function Sidebar() {
   const [user, setUser] = useState("");

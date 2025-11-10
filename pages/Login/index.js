@@ -3,11 +3,9 @@ import Link from 'next/link'
 import { useState} from 'react'
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
-import { Hospital } from 'lucide-react';
 const index = () => {
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
-const [showPassword, setShowPassword] = useState(false);
 const [error, setError] = useState("");
 
 const router = useRouter()
