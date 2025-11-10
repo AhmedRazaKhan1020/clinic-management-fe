@@ -24,7 +24,7 @@ export default function CasePage() {
 
   // useEffect(() => {
   //   const loadMe = async() => {
-  //     const res = await axios.get("http://localhost:8080/user/me",{
+  //     const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/me",{
   //       headers:{Authorization:`Bearer ${localStorage.getItem("token")}` }
   //     })
   //     setUser(res.data.user)
@@ -38,7 +38,7 @@ export default function CasePage() {
     if(!appointmentId) return;
     const getCase = async () => {
       try {
-        const {data} = await axios.get(`http://localhost:8080/case/${appointmentId}`, {
+        const {data} = await axios.get(`https://clinic-management-be-production.up.railway.app/case/${appointmentId}`, {
           headers:{
             Authorization: `Bearer ${localStorage.getItem("token")}`
           }

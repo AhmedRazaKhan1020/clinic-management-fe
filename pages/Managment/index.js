@@ -45,13 +45,13 @@ document.getElementById("EditModal").showModal();
 };
 
 const getUsers = async () => {
-const res = await axios.get("http://localhost:8080/user/", {
+const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/", {
 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
 })
 setUser(res.data)
 }
 const getDoctors = async () => {
-const res = await axios.get("http://localhost:8080/doctor/", {
+const res = await axios.get("https://clinic-management-be-production.up.railway.app/doctor/", {
 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
 })
 setDoctors(res.data)
@@ -66,7 +66,7 @@ if (!role ||!editPassword) return toast("All fields required");
 
 try {
 await axios.put(
-`http://localhost:8080/user/${id}`,
+`https://clinic-management-be-production.up.railway.app/user/${id}`,
 {  password: editPassword, role },
 { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
 );
@@ -88,7 +88,7 @@ if (!Name || !Email || !Password || !Phone) return toast("All fields required");
 
 try {
 const res = await axios.post(
-"http://localhost:8080/user/register",
+"https://clinic-management-be-production.up.railway.app/user/register",
 {
 fullName: Name,
 password: Password,
@@ -119,7 +119,7 @@ toast("Failed to User appointment");
 };
 const deleteUser = async (id) => {
 try {
-await axios.delete(`http://localhost:8080/user/${id}`, {
+await axios.delete(`https://clinic-management-be-production.up.railway.app/user/${id}`, {
 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 toast.success("User Deleted!")
@@ -131,7 +131,7 @@ console.log(error);
 }
 const deleteDoctor = async (id) => {
 try {
-await axios.delete(`http://localhost:8080/doctor/${id}`, {
+await axios.delete(`https://clinic-management-be-production.up.railway.app/doctor/${id}`, {
 headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
 });
 toast.success("Doctor Deleted!")
@@ -146,7 +146,7 @@ if (!Specialization || !AvalibleDays || !AvalibleTime) return toast("All fields 
 
 try {
 const res = await axios.post(
-"http://localhost:8080/doctor/register",
+"https://clinic-management-be-production.up.railway.app/doctor/register",
 {
 userId:id,
 avalibleDays:AvalibleDays,
@@ -172,7 +172,7 @@ if (!Specialization || !AvalibleDays || !AvalibleTime) return toast("All fields 
 
 try {
 const res = await axios.put(
-`http://localhost:8080/doctor/${doctorId}`,
+`https://clinic-management-be-production.up.railway.app/doctor/${doctorId}`,
 {
 avalibleDays:AvalibleDays,
 avalibleTime:AvalibleTime,

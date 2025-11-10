@@ -6,7 +6,7 @@ import PHeader from '../PHeader'
 import { CircleCheck, CircleX } from "lucide-react";
 import { useRouter } from "next/router";
 
-const API = "http://localhost:8080";
+const API = "https://clinic-management-be-production.up.railway.app/";
 
 export default function PatientDashboard() {
   const [doctors, setDoctors] = useState([]);
@@ -28,14 +28,14 @@ export default function PatientDashboard() {
   }, []);
 
   const loadDoctors = async () => {
-    const res = await axios.get(`http://localhost:8080/doctor/`, {
+    const res = await axios.get(`https://clinic-management-be-production.up.railway.app/doctor/`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
     setDoctors(res.data);
   };
 
   const loadMyApps = async () => {
-    const res = await axios.get(`http://localhost:8080/appointment/app`, {
+    const res = await axios.get(`https://clinic-management-be-production.up.railway.app/appointment/app`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     setApps(res.data);
@@ -50,7 +50,7 @@ export default function PatientDashboard() {
     if (!doctor || !date || !time) return toast("All fields required");
 
     await axios.post(
-      `http://localhost:8080/appointment/book`,
+      `https://clinic-management-be-production.up.railway.app/appointment/book`,
       { doctorId: doctor, appointmentDate: date, appointmentTime: time },
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -123,7 +123,7 @@ export default function PatientDashboard() {
                             const newStatus = e.target.value;
                             const token = localStorage.getItem("token");
                             await axios.put(
-                              `http://localhost:8080/appointment/${a._id}`,
+                              `https://clinic-management-be-production.up.railway.app/appointment/${a._id}`,
                               { status: newStatus },
                               { headers: { Authorization: `Bearer ${token}` } }
                             );

@@ -15,7 +15,7 @@ export default function DoctorDashboard() {
     const token = localStorage.getItem("token")
 
     const loadMe = async() => {
-      const res = await axios.get("http://localhost:8080/user/me",{
+      const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/me",{
         headers:{Authorization:`Bearer ${token}` }
       })
       setUser(res.data.user)
@@ -28,7 +28,7 @@ export default function DoctorDashboard() {
     const token = localStorage.getItem("token")
 
     const getUsers = async() => {
-      const res = await axios.get("http://localhost:8080/user/",{
+      const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/",{
         headers:{Authorization:`Bearer ${token}` }
       })
       setGetUsers(res.data)
@@ -40,7 +40,7 @@ export default function DoctorDashboard() {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:8080/appointment/", {
+      const res = await axios.get("https://clinic-management-be-production.up.railway.app/appointment/", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAppointments(res.data);

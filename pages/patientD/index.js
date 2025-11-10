@@ -21,14 +21,14 @@ export default function PatientHome() {
     const token = localStorage.getItem("token")
 
     const loadMe = async() => {
-      const res = await axios.get("http://localhost:8080/user/me",{
+      const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/me",{
         headers:{Authorization:`Bearer ${token}` }
       })
       setUser(res.data.user)
     }
 
     const loadApps = async() => {
-      const res = await axios.get("http://localhost:8080/appointment/app",{
+      const res = await axios.get("https://clinic-management-be-production.up.railway.app/appointment/app",{
         headers:{Authorization:`Bearer ${localStorage.getItem("token")}` }
       })
       setApps(res.data)

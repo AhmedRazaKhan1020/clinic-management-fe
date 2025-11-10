@@ -22,7 +22,7 @@ const handleLogin = async(e)=>{
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8080/user/login", {
+      const response = await fetch("https://clinic-management-be-production.up.railway.app/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

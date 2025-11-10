@@ -23,7 +23,7 @@ const index = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:8080/user/register", {
+      const response = await fetch("https://clinic-management-be-production.up.railway.app/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, phone, fullName }),

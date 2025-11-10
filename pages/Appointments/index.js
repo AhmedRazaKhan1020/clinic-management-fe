@@ -40,7 +40,7 @@ export default function PatientDashboard() {
     }, []);
 
     const loadDoctors = async () => {
-        const res = await axios.get(`http://localhost:8080/doctor/`, {
+        const res = await axios.get(`https://clinic-management-be-production.up.railway.app/doctor/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setDoctors(res.data);
@@ -48,7 +48,7 @@ export default function PatientDashboard() {
     };
 
     const loadMyApps = async () => {
-        const res = await axios.get(`http://localhost:8080/appointment/`, {
+        const res = await axios.get(`https://clinic-management-be-production.up.railway.app/appointment/`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         setApps(res.data);
@@ -57,7 +57,7 @@ export default function PatientDashboard() {
         if (!doctor || !date || !time) return toast("All fields required");
 
         await axios.post(
-        `http://localhost:8080/appointment/book`,
+        `https://clinic-management-be-production.up.railway.app/appointment/book`,
         { doctorId: doctor, appointmentDate: date, appointmentTime: time },
         { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -71,7 +71,7 @@ export default function PatientDashboard() {
 
         try {
         await axios.put(
-        `http://localhost:8080/appointment/${id}`,
+        `https://clinic-management-be-production.up.railway.app/appointment/${id}`,
         { doctorId: editDoctor, appointmentDate: editDate, appointmentTime: editTime },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
         );
@@ -91,7 +91,7 @@ export default function PatientDashboard() {
     };
     const deleteApp = async (id) => {
         try {
-        const res = await axios.delete(`http://localhost:8080/appointment/${id}`, {
+        const res = await axios.delete(`https://clinic-management-be-production.up.railway.app/appointment/${id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         toast.success("Appointment Deleted!")
@@ -102,7 +102,7 @@ export default function PatientDashboard() {
         }
     }
     const getPatient = async () => {
-        const res = await axios.get("http://localhost:8080/user/", {
+        const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         })
         setPatient(res.data)
@@ -180,7 +180,7 @@ export default function PatientDashboard() {
         const newStatus = e.target.value;
         const token = localStorage.getItem("token");
         await axios.put(
-        `http://localhost:8080/appointment/${a._id}`,
+        `https://clinic-management-be-production.up.railway.app/appointment/${a._id}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
         );

@@ -24,7 +24,7 @@ export default function Sidebar() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    axios.get("http://localhost:8080/user/me",{headers:{Authorization:`Bearer ${token}`}})
+    axios.get("https://clinic-management-be-production.up.railway.app/user/me",{headers:{Authorization:`Bearer ${token}`}})
     .then(res=>setUser(res.data.user))
   }, []);
 

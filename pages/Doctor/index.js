@@ -16,7 +16,7 @@ const DoctorDashboard = () => {
   const fetchAppointments = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:8080/appointment/doctor", {
+      const res = await axios.get("https://clinic-management-be-production.up.railway.app/appointment/doctor", {
 headers: { Authorization: `Bearer ${token}` }
       });
       setAppointments(res.data);
@@ -25,7 +25,7 @@ headers: { Authorization: `Bearer ${token}` }
     }
   };
  const getUsers = async () => {
-const res = await axios.get("http://localhost:8080/user/", {
+const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
 })
 setUser(res.data)
@@ -89,7 +89,7 @@ setUser(res.data)
     const newStatus = e.target.value;
     const token = localStorage.getItem("token");
 
-    await axios.put(`http://localhost:8080/appointment/${item._id}`,
+    await axios.put(`https://clinic-management-be-production.up.railway.app/appointment/${item._id}`,
       { status: newStatus },
       { headers: { Authorization: `Bearer ${token}` } }
     );
