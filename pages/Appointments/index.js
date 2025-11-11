@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../Config/api";
 import toast from "react-hot-toast";
 import AHeader from '../AHeader'
 import { useRouter } from "next/router";
@@ -15,11 +15,15 @@ export default function PatientDashboard() {
     const [doctor, setDoctor] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
-    const [id, setId] = useState("");
     const [editDoctor, seteditDoctor] = useState("");
     const [editDate, setEditDate] = useState("");
     const [editTime, setEditTime] = useState("");
-    const [token, setToken] = useState(null);
+    const [id, setId] = useState("")
+    const [patientId, setPatientId] = useState("")
+    const [diagnosis, setDiagnosis] = useState("");
+    const [notes, setNotes] = useState("");
+    const [caseData, setCaseData] = useState("");
+    const [appointmentId, setAppointmentId] = useState("")
 
 
     const router = useRouter()
@@ -27,39 +31,36 @@ export default function PatientDashboard() {
     useEffect(() => {
       if(!localStorage.getItem("token")) return router.push("/") 
     }, [router])
-    
-
     const openUpdateModal = (a) => {
         setId(a._id);
         document.getElementById("updateModal").showModal();
     };
-
-    useEffect(() => {
-        const t = localStorage.getItem("token");
-        setToken(t);
-    }, []);
-
     const loadDoctors = async () => {
-        const res = await axios.get(`https://clinic-management-be-production.up.railway.app/doctor/`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const res = await API.get(`/doctor/`);
         setDoctors(res.data);
         setSpecialization(res.data);
     };
+    const openAddcaseModal = (a) => {
+    setId(a._id);
+    setPatientId(a.patientId)
 
+    document.getElementById("AddcaseModal").showModal();
+    };
+  const openGetcaseModal = (a) => {
+    setAppointmentId(a._id);
+
+    document.getElementById("GetcaseModal").showModal();
+    };
     const loadMyApps = async () => {
-        const res = await axios.get(`https://clinic-management-be-production.up.railway.app/appointment/`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const res = await API.get(`/appointment/`);
         setApps(res.data);
     };
     const bookApp = async () => {
         if (!doctor || !date || !time) return toast("All fields required");
 
-        await axios.post(
-        `https://clinic-management-be-production.up.railway.app/appointment/book`,
+        await API.post(
+        `/appointment/book`,
         { doctorId: doctor, appointmentDate: date, appointmentTime: time },
-        { headers: { Authorization: `Bearer ${token}` } }
         );
 
         toast.success("Appointment booked");
@@ -70,10 +71,9 @@ export default function PatientDashboard() {
         if (!editDoctor) return toast("All fields required");
 
         try {
-        await axios.put(
-        `https://clinic-management-be-production.up.railway.app/appointment/${id}`,
-        { doctorId: editDoctor, appointmentDate: editDate, appointmentTime: editTime },
-        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+        await API.put(
+        `/appointment/${id}`,
+        { doctorId: editDoctor, appointmentDate: editDate, appointmentTime: editTime }
         );
 
         toast.success("Appointment updated");
@@ -91,9 +91,7 @@ export default function PatientDashboard() {
     };
     const deleteApp = async (id) => {
         try {
-        const res = await axios.delete(`https://clinic-management-be-production.up.railway.app/appointment/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        await API.delete(`/appointment/${id}`);
         toast.success("Appointment Deleted!")
         loadMyApps()
         } catch (error) {
@@ -102,23 +100,53 @@ export default function PatientDashboard() {
         }
     }
     const getPatient = async () => {
-        const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-        })
+        const res = await API.get(`/user/`)
         setPatient(res.data)
     }
+    const submitCase = async (e) => {
+    e.preventDefault();
+    if(!diagnosis ||!notes){
+    alert("Please fill all fields")
+    }
+    try {
+      await API.post("/case/case", {
+        appointmentId: id,
+        patientId,
+        diagnosis,
+        notes
+      },);
+      toast.success("Case created success!");
+      setNotes("");
+      setDiagnosis("")
+    } catch (err) {
+      // console.log(err);
+      toast.error("Case create error");
+    }
+    }
+    useEffect(() => {
+    const getCase = async () => {
+      try {
+        const { data } = await API.get(`/case/${appointmentId}`)
+        setCaseData(data)
+      } catch (error) {
+        console.log(error)
+        // toast.error("case not found")
+      }
+    }
+
+    getCase()
+    }, [appointmentId])
     useEffect(() => {
         loadDoctors();
         loadMyApps();
         getPatient()
-    }, [token]);
+    }, []);
 
 
     return (
       <>
         <AHeader />
         <div className="min-h-screen p-4 md:p-6 bg-black text-sky-300 md:ml-64">
-
         <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">All Appointments</h1>
         <button
@@ -157,7 +185,7 @@ export default function PatientDashboard() {
         <td className="text-center">
         <button
         onClick={() =>
-        router.push(`/Case?appointmentId=${a._id}&patientId=${a.patientId}`)
+         openAddcaseModal(a)
         }
         className="btn btn-sm  text-white hover:text-sky-500 bg-transparent border border-sky-400 md:mt-1 md:mr-1"
         >
@@ -165,7 +193,7 @@ export default function PatientDashboard() {
         </button>
         <button
         onClick={() =>
-        router.push(`/getCase?appointmentId=${a._id}`)
+        openGetcaseModal(a)
         }
         className="btn btn-sm  text-white hover:text-sky-500 bg-transparent border border-sky-400 mt-1"
         >
@@ -178,11 +206,9 @@ export default function PatientDashboard() {
         className="cursor-pointer select select-sm bg-black text-sky-400 border border-sky-600"
         onChange={async (e) => {
         const newStatus = e.target.value;
-        const token = localStorage.getItem("token");
-        await axios.put(
-        `https://clinic-management-be-production.up.railway.app/appointment/${a._id}`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
+        await API.put(
+        `/appointment/${a._id}`,
+        { status: newStatus }
         );
         loadMyApps();
         }}
@@ -217,7 +243,6 @@ export default function PatientDashboard() {
         <dialog id="bookModal" className="modal">
         <div className="modal-box bg-neutral-900 text-sky-300">
         <h3 className="font-bold text-lg mb-4">Book Appointment</h3>
-
         <select
         className="select select-bordered w-full mb-3"
         onChange={(e) => setDoctor(e.target.value)}
@@ -299,6 +324,98 @@ export default function PatientDashboard() {
         </div>
         </div>
         </dialog>
+
+         {/* Add Case */}
+      <dialog id="AddcaseModal" className="modal">
+        <div className="modal-box bg-neutral-900 text-sky-300 border border-sky-30/80">
+          <h3 className="font-bold text-lg mb-4">ADD CASE</h3>
+          <form onSubmit={submitCase}>
+            <div className="form-control mb-5">
+              <label className="label">
+                <span className="label-text text-sky-300">Diagnosis</span>
+              </label>
+              <input
+                type="text"
+                value={diagnosis}
+                placeholder="Enter Diagnosis"
+                onChange={(e) => setDiagnosis(e.target.value)}
+                className="input input-bordered w-full bg-neutral-900 text-sky-300 border-gray-700"
+                required
+              />
+            </div>
+
+            <div className="form-control mb-5">
+              <label className="label">
+                <span className="label-text text-sky-300">Notes</span>
+              </label>
+              <textarea
+                rows={5}
+                value={notes}
+                placeholder="Enter Notes"
+                onChange={(e) => setNotes(e.target.value)}
+                className="textarea textarea-bordered w-full bg-neutral-900 text-sky-300 border-gray-700"
+                required
+              ></textarea>
+            </div>
+
+            <button type='submit' className="px-6 py-2 rounded-xl bg-sky-800/20 border border-sky-700 hover:bg-sky-700/30 transition-all duration-200">
+              ADD
+            </button>
+            <button className="px-6 py-2 rounded-xl bg-sky-800/20 border border-sky-700 hover:bg-sky-700/30 transition-all duration-200 ml-2" onClick={() => {
+              document.getElementById("AddcaseModal").close();
+              setId("");
+              setPatientId("");
+              setNotes("");
+              setDiagnosis("")
+
+            }}>
+              Cancel
+            </button>
+          </form>
+        </div>
+      </dialog>
+
+      {/* See Case */}
+      <dialog id="GetcaseModal" className="modal">
+        <div className="modal-box bg-neutral-900 text-sky-300 rounded-2xl shadow-xl p-8 border border-sky-800/30">
+          {/* Header */}
+          <h1 className="text-3xl font-extrabold mb-6 text-center border-b border-sky-800/30 pb-3">
+            Case Details
+          </h1>
+
+          {/* Content */}
+          <div className="space-y-4 text-lg">
+            <div className="flex justify-between items-start border-b border-sky-800/30">
+              <b className="text-sky-300 w-32">Patient:</b>
+              <p className="text-white flex-1 text-right">{caseData.patientId || "N/A"}</p>
+            </div>
+
+            <div className="flex justify-between items-start border-b border-sky-800/30">
+              <b className="text-sky-300 w-32">Diagnosis:</b>
+              <p className="text-white flex-1 text-right">{caseData.diagnosis || "N/A"}</p>
+            </div>
+
+            <div className="flex justify-between items-start border-b border-sky-800/30">
+              <b className="text-sky-300 w-32">Notes:</b>
+              <p className="text-white flex-1 text-right">{caseData.notes || "N/A"}</p>
+            </div>
+          </div>
+
+          {/* Footer Buttons */}
+          <div className="mt-8 flex justify-center">
+            <button
+              className="px-6 py-2 rounded-xl bg-sky-800/20 border border-sky-700 hover:bg-sky-700/30 transition-all duration-200"
+              onClick={() => {
+                document.getElementById("GetcaseModal").close();
+                setPatientId("");
+                setCaseData("");
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </dialog>
         </div>    
       </>  
     );

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ClipboardClock, Hospital, LayoutDashboard , Menu, X, User } from "lucide-react";
-import axios from "axios";
+import API from "../Config/api";
 import { usePathname} from "next/navigation";
 import { useRouter } from "next/router";
 
@@ -12,9 +12,9 @@ export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   
-      useEffect(() => {
-        if(!localStorage.getItem("token")) return router.push("/") 
-      }, [router])
+  useEffect(() => {
+  if(!localStorage.getItem("token")) return router.push("/") 
+  }, [router])
 
   const links = [
     { link: "/patientD", icon: <LayoutDashboard size={20} />, label: "Dashboard" },
@@ -24,7 +24,7 @@ export default function Sidebar() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    axios.get("https://clinic-management-be-production.up.railway.app/user/me",{headers:{Authorization:`Bearer ${token}`}})
+    API.get("/user/me")
     .then(res=>setUser(res.data.user))
   }, []);
 

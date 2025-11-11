@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState} from 'react'
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
+import API from '../Config/api';
 const index = () => {
 const [email, setEmail] = useState("");
 const [password, setPassword] = useState("");
@@ -22,13 +23,9 @@ const handleLogin = async(e)=>{
     setError(null);
 
     try {
-      const response = await fetch("https://clinic-management-be-production.up.railway.app/user/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await API.post("/user/login", { email, password});
 
-      const data = await response.json();
+      const data = await response.data;
       const isPatient = data.user.role === 'patient';
       const isDoctor = data.user.role === 'doctor';
       const isAdmin = data.user.role === 'admin';

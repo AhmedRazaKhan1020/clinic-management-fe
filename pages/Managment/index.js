@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../Config/api";
 import toast from "react-hot-toast";
 import AHeader from '../AHeader'
 import { useRouter } from "next/router"
@@ -21,6 +21,7 @@ const [doctorId, setDoctorId] = useState("")
 const [Specialization, setSpecialization] = useState("")
 const [AvalibleDays, setAvalibleDays] = useState("")
 const [AvalibleTime, setAvalibleTime] = useState("")
+
 
  const router = useRouter()
 
@@ -45,15 +46,11 @@ document.getElementById("EditModal").showModal();
 };
 
 const getUsers = async () => {
-const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/", {
-headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-})
+const res = await API.get(`/user/`)
 setUser(res.data)
 }
 const getDoctors = async () => {
-const res = await axios.get("https://clinic-management-be-production.up.railway.app/doctor/", {
-headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-})
+const res = await API.get(`/doctor/`)
 setDoctors(res.data)
 }
 useEffect(() => {
@@ -65,10 +62,9 @@ const editUser = async () => {
 if (!role ||!editPassword) return toast("All fields required");
 
 try {
-await axios.put(
-`https://clinic-management-be-production.up.railway.app/user/${id}`,
-{  password: editPassword, role },
-{ headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+await API.put(
+`/user/${id}`,
+{  password: editPassword, role }
 );
 
 toast.success("User updated!");
@@ -87,19 +83,14 @@ const User = async () => {
 if (!Name || !Email || !Password || !Phone) return toast("All fields required");
 
 try {
-const res = await axios.post(
-"https://clinic-management-be-production.up.railway.app/user/register",
+const res = await API.post(
+`/user/register`,
 {
 fullName: Name,
 password: Password,
 phone: Phone,
 email: Email,
 role: "doctor",
-},
-{
-headers: {
-Authorization: `Bearer ${localStorage.getItem("token")}`
-}
 }
 );
 
@@ -119,9 +110,7 @@ toast("Failed to User appointment");
 };
 const deleteUser = async (id) => {
 try {
-await axios.delete(`https://clinic-management-be-production.up.railway.app/user/${id}`, {
-headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
+await API.delete(`/user/${id}`);
 toast.success("User Deleted!")
 getUsers()
 } catch (error) {
@@ -131,9 +120,7 @@ console.log(error);
 }
 const deleteDoctor = async (id) => {
 try {
-await axios.delete(`https://clinic-management-be-production.up.railway.app/doctor/${id}`, {
-headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-});
+await API.delete(`/doctor/${id}`);
 toast.success("Doctor Deleted!")
 getDoctors()
 } catch (error) {
@@ -145,18 +132,13 @@ const Doctor = async () => {
 if (!Specialization || !AvalibleDays || !AvalibleTime) return toast("All fields required");
 
 try {
-const res = await axios.post(
-"https://clinic-management-be-production.up.railway.app/doctor/register",
+const res = await API.post(
+`/doctor/register`,
 {
 userId:id,
 avalibleDays:AvalibleDays,
 avalibleTime:AvalibleTime,
 specialization:Specialization
-},
-{
-headers: {
-Authorization: `Bearer ${localStorage.getItem("token")}`
-}
 }
 );
 toast.success(res.data.message ||"Doctor added!");
@@ -171,17 +153,12 @@ const editDoctor = async () => {
 if (!Specialization || !AvalibleDays || !AvalibleTime) return toast("All fields required");
 
 try {
-const res = await axios.put(
-`https://clinic-management-be-production.up.railway.app/doctor/${doctorId}`,
+const res = await API.put(
+`/doctor/${doctorId}`,
 {
 avalibleDays:AvalibleDays,
 avalibleTime:AvalibleTime,
 specialization:Specialization
-},
-{
-headers: {
-Authorization: `Bearer ${localStorage.getItem("token")}`
-}
 }
 );
 toast.success(res.data.message ||"Doctor Updated!");
@@ -330,7 +307,7 @@ className="input input-bordered w-full mb-4"
 <button className="btn btn-ghost" onClick={() => {
 document.getElementById("updateModal").close();
 // optional: clear states on cancel
-setId(""); setEditName(""); setEditEmail(""); setEditPhone(""); setEditPassword(""); setRole("");
+setId(""); setEditName(""); setEditPassword(""); setRole("");
 }}>
 Cancel
 </button>

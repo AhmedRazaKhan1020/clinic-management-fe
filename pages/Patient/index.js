@@ -1,12 +1,11 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../Config/api";
 import toast from "react-hot-toast";
 import PHeader from '../PHeader'
 import { CircleCheck, CircleX } from "lucide-react";
 import { useRouter } from "next/router";
 
-const API = "https://clinic-management-be-production.up.railway.app/";
 
 export default function PatientDashboard() {
   const [doctors, setDoctors] = useState([]);
@@ -14,51 +13,58 @@ export default function PatientDashboard() {
   const [doctor, setDoctor] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [token, setToken] = useState(null);
+  const [caseData, setCaseData] = useState("");
+  const [appointmentId, setAppointmentId] = useState("")
 
   const router = useRouter()
   
+  const openGetcaseModal = (a) => {
+    setAppointmentId(a._id);
+
+    document.getElementById("GetcaseModal").showModal();
+  };
       useEffect(() => {
         if(!localStorage.getItem("token")) return router.push("/") 
       }, [router])
 
-  useEffect(() => {
-    const t = localStorage.getItem("token");
-    setToken(t);
-  }, []);
-
   const loadDoctors = async () => {
-    const res = await axios.get(`https://clinic-management-be-production.up.railway.app/doctor/`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-    });
+    const res = await API.get(`/doctor/`);
     setDoctors(res.data);
   };
 
   const loadMyApps = async () => {
-    const res = await axios.get(`https://clinic-management-be-production.up.railway.app/appointment/app`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
+    const res = await API.get(`/appointment/app`);
     setApps(res.data);
   };
 
   useEffect(() => {
     loadDoctors();
     loadMyApps();
-  }, [token]);
+  }, []);
 
   const bookApp = async () => {
     if (!doctor || !date || !time) return toast("All fields required");
 
-    await axios.post(
-      `https://clinic-management-be-production.up.railway.app/appointment/book`,
-      { doctorId: doctor, appointmentDate: date, appointmentTime: time },
-      { headers: { Authorization: `Bearer ${token}` } }
+    await API.post(`/appointment/book`,
+      { doctorId: doctor, appointmentDate: date, appointmentTime: time }
     );
-
     toast.success("Appointment booked");
     loadMyApps();
     document.getElementById("bookModal").close();
   };
+    useEffect(() => {
+    const getCase = async () => {
+      try {
+        const { data } = await API.get(`/case/${appointmentId}`)
+        setCaseData(data)
+      } catch (error) {
+        console.log(error)
+        // toast.error("case not found")
+      }
+    }
+
+    getCase()
+  }, [appointmentId])
 
   return (
     <>
@@ -101,7 +107,7 @@ export default function PatientDashboard() {
                     <td className="text-center">
                       <button
                         onClick={() =>
-                          router.push(`/getCase?appointmentId=${a._id}`)
+                          openGetcaseModal(a)
                         }
                         className="btn btn-sm bg-sky-600 text-white hover:bg-sky-500"
                       >
@@ -122,10 +128,8 @@ export default function PatientDashboard() {
                           onChange={async (e) => {
                             const newStatus = e.target.value;
                             const token = localStorage.getItem("token");
-                            await axios.put(
-                              `https://clinic-management-be-production.up.railway.app/appointment/${a._id}`,
-                              { status: newStatus },
-                              { headers: { Authorization: `Bearer ${token}` } }
+                            await API.put(`/appointment/${a._id}`,
+                            { status: newStatus }
                             );
                             loadMyApps();
                           }}
@@ -172,15 +176,57 @@ export default function PatientDashboard() {
             />
 
             <div className="flex justify-end gap-2">
-              <button className="btn btn-ghost" onClick={() => document.getElementById("bookModal").close()}>
+              <button className="px-6 py-2 rounded-xl bg-sky-800/20 border border-sky-700 hover:bg-sky-700/30 transition-all duration-200" onClick={() => document.getElementById("bookModal").close()}>
                 Cancel
               </button>
-              <button onClick={bookApp} className="btn btn-primary">
+              <button onClick={bookApp} className="px-6 py-2 rounded-xl bg-sky-800/20 border border-sky-700 hover:bg-sky-700/30 transition-all duration-200">
                 Book
               </button>
             </div>
           </div>
         </dialog>
+
+          {/* See Case */}
+      <dialog id="GetcaseModal" className="modal">
+        <div className="modal-box bg-neutral-900 text-sky-300 rounded-2xl shadow-xl p-8 border border-sky-800/30">
+          {/* Header */}
+          <h1 className="text-3xl font-extrabold mb-6 text-center border-b border-sky-800/30 pb-3">
+            Case Details
+          </h1>
+
+          {/* Content */}
+          <div className="space-y-4 text-lg">
+            <div className="flex justify-between items-start border-b border-sky-800/30">
+              <b className="text-sky-300 w-32">Patient:</b>
+              <p className="text-white flex-1 text-right">{caseData.patientId || "N/A"}</p>
+            </div>
+
+            <div className="flex justify-between items-start border-b border-sky-800/30">
+              <b className="text-sky-300 w-32">Diagnosis:</b>
+              <p className="text-white flex-1 text-right">{caseData.diagnosis || "N/A"}</p>
+            </div>
+
+            <div className="flex justify-between items-start border-b border-sky-800/30">
+              <b className="text-sky-300 w-32">Notes:</b>
+              <p className="text-white flex-1 text-right">{caseData.notes || "N/A"}</p>
+            </div>
+          </div>
+
+          {/* Footer Buttons */}
+          <div className="mt-8 flex justify-center">
+            <button
+              className="px-6 py-2 rounded-xl bg-sky-800/20 border border-sky-700 hover:bg-sky-700/30 transition-all duration-200"
+              onClick={() => {
+                document.getElementById("GetcaseModal").close();
+                setAppointmentId("");
+                setCaseData("");
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </dialog>
       </div>
     </>
   );

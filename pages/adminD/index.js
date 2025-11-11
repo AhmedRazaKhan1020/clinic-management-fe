@@ -1,7 +1,7 @@
 "use client"
 import AHeader from '../AHeader' 
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import API from "../Config/api";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -12,37 +12,24 @@ export default function DoctorDashboard() {
   const [getUsers, setGetUsers] = useState([])
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-
     const loadMe = async() => {
-      const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/me",{
-        headers:{Authorization:`Bearer ${token}` }
-      })
+      const res = await API.get(`/user/me`)
       setUser(res.data.user)
     }
-
     loadMe()
   },[])
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-
     const getUsers = async() => {
-      const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/",{
-        headers:{Authorization:`Bearer ${token}` }
-      })
+      const res = await API.get(`/user/`)
       setGetUsers(res.data)
     }
-
     getUsers()
   },[])
 
   const fetchAppointments = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get("https://clinic-management-be-production.up.railway.app/appointment/", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get(`/appointment/`);
       setAppointments(res.data);
     } catch (err) {
       console.log("Error fetching appointments:", err);

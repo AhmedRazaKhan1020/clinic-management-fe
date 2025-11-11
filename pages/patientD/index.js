@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import axios from "axios"
+import API from "../Config/api";
 import { Pie } from "react-chartjs-2";
 import PHeader from '../PHeader'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
@@ -18,19 +18,13 @@ export default function PatientHome() {
       }, [router])
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-
     const loadMe = async() => {
-      const res = await axios.get("https://clinic-management-be-production.up.railway.app/user/me",{
-        headers:{Authorization:`Bearer ${token}` }
-      })
+      const res = await API.get("/user/me")
       setUser(res.data.user)
     }
 
     const loadApps = async() => {
-      const res = await axios.get("https://clinic-management-be-production.up.railway.app/appointment/app",{
-        headers:{Authorization:`Bearer ${localStorage.getItem("token")}` }
-      })
+      const res = await API.get("/appointment/app")
       setApps(res.data)
     }
 

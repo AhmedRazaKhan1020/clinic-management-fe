@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
+import API from '../Config/api'
 
 const index = () => {
     const [fullName, setFullName]=useState("")
@@ -23,13 +24,10 @@ const index = () => {
     setError(null);
 
     try {
-      const response = await fetch("https://clinic-management-be-production.up.railway.app/user/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, phone, fullName }),
-      });
+      const response = await API.post("/user/register",
+        { email, password, phone, fullName });
 
-      const data = await response.json();
+      const data = await response.data;
 
       if (response.ok) {
         console.log("Register successful:", data);
